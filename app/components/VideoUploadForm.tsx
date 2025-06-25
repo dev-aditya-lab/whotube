@@ -5,6 +5,7 @@ import FileUpload from "./FileUpload";
 import { useRouter } from "next/navigation";
 import { useNotification } from "./Notification";
 import { FaRegImage, FaRegFileVideo, FaSpinner, FaExclamationCircle } from "react-icons/fa";
+import Image from "next/image";
 
 const initialState = {
   title: "",
@@ -27,14 +28,16 @@ function VideoUploadForm() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleVideoUpload = (res: any) => {
-    setForm((prev) => ({ ...prev, videoUrl: res.url || res.filePath || "" }));
+  const handleVideoUpload = (res: unknown) => {
+    const result = res as { url?: string; filePath?: string };
+    setForm((prev) => ({ ...prev, videoUrl: result.url || result.filePath || "" }));
     setVideoError(null);
     showNotification("Video uploaded!", "success");
   };
 
-  const handleThumbnailUpload = (res: any) => {
-    setForm((prev) => ({ ...prev, thumbnailUrl: res.url || res.filePath || "" }));
+  const handleThumbnailUpload = (res: unknown) => {
+    const result = res as { url?: string; filePath?: string };
+    setForm((prev) => ({ ...prev, thumbnailUrl: result.url || result.filePath || "" }));
     setThumbnailError(null);
     showNotification("Thumbnail uploaded!", "success");
   };
@@ -67,8 +70,12 @@ function VideoUploadForm() {
       showNotification("Video uploaded successfully!", "success");
       setForm(initialState);
       router.push("/");
-    } catch (error: any) {
-      showNotification(error.message || "Upload failed", "error");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        showNotification(error.message || "Upload failed", "error");
+      } else {
+        showNotification("Upload failed", "error");
+      }
     } finally {
       setUploading(false);
     }
@@ -180,9 +187,11 @@ function VideoUploadForm() {
             </div>
           )}
           {form.thumbnailUrl && (
-            <img
+            <Image
               src={form.thumbnailUrl}
               alt="Thumbnail"
+              width={144}
+              height={96}
               className="mt-3 w-36 h-24 object-cover rounded-xl border border-pink-700 shadow-lg"
             />
           )}

@@ -6,7 +6,15 @@ import { connectToDatabase } from "@/lib/db";
 async function getVideos(): Promise<IVideo[]> {
   await connectToDatabase();
   const videos = await Video.find({}).sort({ createdAt: -1 }).lean();
-  return videos.map((v: any) => ({ ...v, _id: v._id?.toString() }));
+  return videos.map((v) => ({
+    ...v,
+    _id: v._id?.toString(),
+    title: v.title,
+    description: v.description,
+    videoUrl: v.videoUrl,
+    thumbnailUrl: v.thumbnailUrl,
+    // add any other required fields from IVideo here
+  })) as IVideo[];
 }
 
 export default async function HomePage() {
@@ -64,7 +72,7 @@ export default async function HomePage() {
             Start Building Your Audience
           </h3>
           <p className="text-lg sm:text-xl text-gray-400 mb-8">
-            Whether you're a beginner or a pro, WhoTube helps your content shine. Join a community of creative minds and share your story.
+            Whether you&apos;re a beginner or a pro, WhoTube helps your content shine. Join a community of creative minds and share your story.
           </p>
           <Link
             href="/upload"

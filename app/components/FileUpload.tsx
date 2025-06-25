@@ -1,19 +1,15 @@
 "use client";
 
 import {
-  ImageKitAbortError,
-  ImageKitInvalidRequestError,
-  ImageKitServerError,
-  ImageKitUploadNetworkError,
   upload,
 } from "@imagekit/next";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 interface FileUploadProps {
-  onSuccess: (res: any) => void;
+  onSuccess: (res: unknown) => void;
   onProgress?: (progress: number) => void;
   fileType?: "image" | "video";
-  onError?: (msg: string) => void; // <-- Add this line
+  onError?: (msg: string) => void;
 }
 
 const FileUpload = ({ onSuccess, onProgress, fileType, onError }: FileUploadProps) => {
@@ -67,7 +63,7 @@ const FileUpload = ({ onSuccess, onProgress, fileType, onError }: FileUploadProp
         },
       });
       onSuccess(res);
-    } catch (error: any) {
+    } catch (error: unknown) {
       onError?.("Upload failed. Please try again.");
       console.error("Upload failed", error);
     } finally {
